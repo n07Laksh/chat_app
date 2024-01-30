@@ -14,7 +14,7 @@ export default function Home() {
     if (!isLogin) {
       navigate.push("/login");
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <main className={styles.main}>

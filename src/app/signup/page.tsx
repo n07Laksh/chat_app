@@ -30,7 +30,7 @@ const Signup = () => {
     if (isLogin) {
       navigate.push("/");
     }
-  }, []);
+  }, [navigate]);
 
   const handleBrandName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value);

@@ -25,7 +25,7 @@ const Login = () => {
     if (isLogin) {
       navigate.push("/");
     }
-  }, []);
+  }, [navigate]);
 
   const passwordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newPassword: string = event.target.value;
@@ -203,7 +203,7 @@ const Login = () => {
                         className={Style.fg_pass_p}
                         style={{ fontSize: "13px" }}
                       >
-                        Don't have an account? Signup here!
+                        {`Don't have an account? Signup here!`}
                       </p>
                     </Link>
                   </div>

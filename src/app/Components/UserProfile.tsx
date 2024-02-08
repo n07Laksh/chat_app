@@ -2,6 +2,7 @@ import * as React from "react";
 import Image from "next/image";
 import profileImg from "../Assets/pngwing.com (1).png";
 import styles from "../page.module.css";
+import { useTheme } from "next-themes";
 
 import {
   Edit,
@@ -21,16 +22,35 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 300,
   bgcolor: "background.paper",
-  border: "none",
   boxShadow: 24,
   p: 4,
   borderRadius: "10px",
+  background: "var(--background)",
+  color: "var(--foreground)",
+  border: `1px solid var(--border)`,
+};
+const imgStyle = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 450,
+  height: 450,
+  bgcolor: "background.paper",
+  outline: "none",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: "10px",
+  background: "var(--background)",
+  color: "var(--foreground)",
+  border: `1px solid var(--border)`,
 };
 
 const UserProfile = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const [open, setOpen] = React.useState<boolean>(false);
+  const [imgOpen, setImgOpen] = React.useState<boolean>(false);
   const [editTxt, setEditTxt] = React.useState<string>("");
   const [inputType, setInputType] = React.useState<string>("");
   const [headTxt, setHeadTxt] = React.useState<string>("");
@@ -50,17 +70,25 @@ const UserProfile = () => {
     setHeadTxt(helptxt);
     setOpen(true);
   };
-  const handleClose = () => setOpen(false);
+  const handleClose = (): void => setOpen(false);
+  const handleImgOpen = (): void => {
+    setImgOpen(true);
+  };
+  const handleImgClose = (): void => {
+    setImgOpen(false);
+  };
 
-  const handleUploadClick = () => {
-    // Click the hidden input element to trigger file selection
+  // function for input type file clicking
+  const handleUploadClick = (): void => {
     if (inputRef.current) {
       inputRef.current.click();
     }
   };
 
   // Function to handle file selection
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     const fileList = event.target.files;
     if (fileList && fileList.length > 0) {
       // Process the selected file(s)
@@ -69,7 +97,6 @@ const UserProfile = () => {
       if (selectedFile) {
         const imageUrl = URL.createObjectURL(selectedFile);
         setProfileImage(imageUrl);
-        console.log("Selected file:", imageUrl);
       }
       // You can perform further actions like uploading the file to a server
     }
@@ -125,9 +152,9 @@ const UserProfile = () => {
                 <Button
                   sx={{
                     marginTop: "30px",
+                    color:"var(--boxColor)"
                   }}
                   variant="outlined"
-                  color="error"
                   onClick={handleClose}
                 >
                   Cancel
@@ -135,9 +162,9 @@ const UserProfile = () => {
                 <Button
                   sx={{
                     marginTop: "30px",
+                    background:"var(--boxColor)"
                   }}
                   variant="contained"
-                  color="success"
                   onClick={handleClose}
                 >
                   Update
@@ -148,16 +175,79 @@ const UserProfile = () => {
         </Fade>
       </Modal>
 
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={imgOpen}
+        onClose={handleImgClose}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+          },
+        }}
+      >
+        <Fade in={imgOpen}>
+          <Box sx={imgStyle}>
+            <Typography
+              sx={{
+                width: "80%",
+                margin: "0 auto",
+              }}
+              id="transition-modal-title"
+              variant="h6"
+              component="div"
+            >
+              <Image
+                style={{ width: "100%", height: "100%" }}
+                src={profileImage ? profileImage : profileImg}
+                alt="profile image view"
+                width={100}
+                height={100}
+              />
+            </Typography>
+            <Typography
+              sx={{
+                marginTop: "30px",
+                position: "absolute",
+                bottom: "100%",
+                left: "100%",
+              }}
+            >
+              <Button
+                sx={{
+                  minWidth: "30px",
+                  padding: "0",
+                  fontSize: "21px",
+                  fontWeight: "bolder",
+                  color: "var(--foreground)",
+                  width: "30px",
+                  height: "30px",
+                  borderRadius: "50%",
+                  "&:hover": {
+                    backgroundColor: "var(--hoverColor)",
+                  },
+                }}
+                onClick={handleImgClose}
+                color='error'
+              >
+                X
+              </Button>
+            </Typography>
+          </Box>
+        </Fade>
+      </Modal>
+
       <section className={styles.profile_image}>
         <div title="Profile Image">
           <Image
             className={styles.user_img}
-            style={{ width: "100%", height: "100%" }}
-            fill={true}
-            layout={"fill"}
-            objectFit={"contain"}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
             src={profileImage ? profileImage : profileImg}
             alt="profile Image"
+            width={100}
+            height={100}
           />
           <section className={styles.profile_img_overlay}>
             <div title="Upload">
@@ -174,7 +264,10 @@ const UserProfile = () => {
               />
             </div>
             <div title="View">
-              <Visibility sx={{ fontSize: 30, cursor: "pointer" }} />
+              <Visibility
+                onClick={handleImgOpen}
+                sx={{ fontSize: 30, cursor: "pointer" }}
+              />
             </div>
             <div title="Delete">
               <Delete sx={{ fontSize: 30, cursor: "pointer" }} />

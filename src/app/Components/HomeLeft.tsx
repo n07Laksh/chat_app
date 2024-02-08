@@ -78,9 +78,16 @@ const HomeLeft = () => {
                   aria-haspopup="true"
                   onClick={handleClick}
                 >
-                  <MoreVert />
+                  <MoreVert sx={{ color: "var(--foreground)" }} />
                 </IconButton>
                 <Menu
+                  sx={{
+                    "& > div:nth-child(3)": {
+                      background: "var(--background)",
+                      color: "var(--foreground)",
+                      border: "1px solid var(--border)",
+                    },
+                  }}
                   id="long-menu"
                   MenuListProps={{
                     "aria-labelledby": "long-button",
@@ -101,6 +108,10 @@ const HomeLeft = () => {
                     <MenuItem
                       key={option}
                       onClick={() => handleRouteClick(option)}
+                      sx={{
+                        transition:"0.3s ease",
+                        ":hover": {background:"var(--hoverColor)"},
+                      }}
                     >
                       {option}
                     </MenuItem>

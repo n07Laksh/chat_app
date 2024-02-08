@@ -7,7 +7,7 @@
 .home_main > div:nth-child(1) {
   width: 30%;
   height: 100%;
-  border-right: 1px solid black;
+  border-right: 1px solid var(--border);
 }
 .home_main > div:nth-child(2) {
   width: 70%;
@@ -16,7 +16,7 @@
   display: flex;
   justify-content: space-between;
   padding: 15px 20px;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid var(--border);
 }
 
 .user_profile {
@@ -32,7 +32,7 @@
 }
 
 .user_profile:hover {
-  background: rgb(43, 41, 41);
+  background: var(--hoverColor);
   cursor: pointer;
 }
 .more_setting {
@@ -44,10 +44,10 @@
   overflow: hidden;
   border-radius: 50%;
   transition: 0.3s ease;
+  cursor: pointer;
 }
 .more_setting:hover {
-  background: rgb(212, 211, 211);
-  cursor: pointer;
+  background: var(--hoverColor);
 }
 .home_right_img_section {
   width: 100%;
@@ -68,14 +68,14 @@
 .user_ul li {
   padding: 30px;
   font-size: 17px;
-  background: rgb(226, 223, 223);
-  color: #8d5353;
-  border: 0.2px solid rgba(0, 0, 0, 0.2);
+  background: inherit;
+  color: var(--foreground);
+  border-bottom: 0.2px solid var(--border);
+  transition: 0.3s ease;
 }
 .user_ul li:hover {
-  background: gray;
+  background: var(--hoverColor);
   cursor: pointer;
-  color: black;
 }
 
 .prof_sett_head {
@@ -84,8 +84,8 @@
   margin-bottom: 30px;
   box-shadow: -3px -3px 5px black;
 }
- .prof_sett_head > span {
-  color: rgb(53, 50, 50);
+.prof_sett_head > span {
+  color: var(--foreground);
   font-family: sans;
   font-weight: bolder;
   font-size: 20px;
@@ -96,17 +96,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left:30px;
-} 
+  margin-left: 30px;
+  transition: 0.3s ease;
+}
 .prof_sett_head span:hover {
-  background: rgb(212, 211, 211);
+  background: var(--hoverColor);
 }
 .chat_box {
   display: flex;
 }
 .current_chat_user_header {
   padding: 25px;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid var(--border);
 }
 .chat_box_main {
   height: calc(100vh - 100px);
@@ -115,7 +116,6 @@
 }
 .user_info_close {
   cursor: pointer;
-  font-family: sans;
   color: red;
 }
 .profile_image {
@@ -133,7 +133,7 @@
   align-items: center;
   overflow: hidden;
   position: relative;
-  transition: 0.4s ease;
+  transition: 1.4s ease;
 }
 .profile_img_overlay {
   position: absolute;
@@ -143,7 +143,7 @@
   height: 100%;
   opacity: 0;
   display: flex;
-  transition: 0.4s ease;
+  transition: 0.7s ease;
   justify-content: center;
   align-items: center;
   gap: 16px;
@@ -163,7 +163,7 @@
   width: 100%;
 }
 .user_details li {
-  padding:20px 0;
+  padding: 20px 0;
   display: flex;
   justify-content: center;
 }
@@ -217,22 +217,23 @@
   align-items: center;
   padding: 5px 0;
   cursor: pointer;
+  transition: 0.3s ease;
 }
-.setting_user_sec > div{
+.setting_user_sec > div {
   display: flex;
   align-items: center;
   gap: 20px;
   width: 85%;
 }
 .setting_user_sec:hover {
-  background:#dfdcdc;
+  background: var(--hoverColor);
 }
 .setting_user_container {
   width: 100px;
   height: 100px;
   overflow: hidden;
   position: relative;
-  border: 1px solid;
+  border: 1px solid var(--border);
   border-radius: 50%;
 }
 .setting_other_sec {
@@ -245,9 +246,10 @@
   display: flex;
   padding: 11px 0;
   justify-content: center;
+  transition: 0.3s ease;
 }
 .setting_other_sec > li:hover {
-  background: #dfdcdc;
+  background: var(--hoverColor);
   cursor: pointer;
 }
 .setting_li_items {

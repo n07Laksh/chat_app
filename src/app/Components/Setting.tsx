@@ -19,10 +19,12 @@ import {
   Slide,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
+import { useTheme } from "next-themes";
 
 import Image from "next/image";
 import user from "../Assets/pngwing.com (1).png";
 import styles from "../page.module.css";
+import { pink } from "@mui/material/colors";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -33,24 +35,16 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 300,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  borderRadius: "10px",
-  p: 4,
-};
-
 interface YourComponentProps {
   handleRouteClick: (str: string) => void;
 }
 
 const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
+  const { theme, setTheme } = useTheme();
+  const [selectedValue, setSelectedValue] = React.useState<string>("");
+
   const [open, setOpen] = React.useState(false);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -68,6 +62,26 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
     handleRouteClick("profile");
   };
 
+  const handleMode = () => {
+    setTheme(selectedValue);
+    handleClose();
+  };
+
+  const style = {
+    position: "absolute" as "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 300,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    borderRadius: "10px",
+    p: 4,
+    background: "var(--background)",
+    color: "var(--foreground)",
+    border: `1px solid var(--border)`,
+  };
+
   return (
     <>
       <div>
@@ -77,6 +91,9 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
               "& > div:nth-child(3) > div": {
                 borderRadius: "10px",
                 p: 2,
+                background: "var(--background)",
+                color: "var(--foreground)",
+                border: `1px solid var(--border)`,
               },
             }}
             open={dialog}
@@ -87,19 +104,22 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
           >
             <DialogTitle>{"Confirm"}</DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-slide-description">
+              <DialogContentText
+                sx={{ color: "inherit" }}
+                id="alert-dialog-slide-description"
+              >
                 {`Are you sure? You want to log out.`}
               </DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button
                 variant="outlined"
-                color="error"
+                sx={{color:"var(--boxColor)"}}
                 onClick={handleDialogClose}
               >
                 Cancel
               </Button>
-              <Button variant="contained" color="success" onClick={handleClose}>
+              <Button variant="contained" sx={{background: "var(--boxColor)",}} onClick={handleClose}>
                 Confirm
               </Button>
             </DialogActions>
@@ -132,22 +152,41 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
               <Typography id="transition-modal-description" sx={{ mt: 3 }}>
                 <RadioGroup
                   aria-labelledby="demo-radio-buttons-group-label"
-                  defaultValue="light"
+                  defaultValue={theme}
                   name="radio-buttons-group"
+                  onChange={(event) => setSelectedValue(event.target.value)}
                 >
                   <FormControlLabel
                     value="light"
-                    control={<Radio />}
+                    control={
+                      <Radio
+                        sx={{
+                          color: "var(--boxColor)",
+                        }}
+                      />
+                    }
                     label="Light"
                   />
                   <FormControlLabel
                     value="dark"
-                    control={<Radio />}
+                    control={
+                      <Radio
+                        sx={{
+                          color: "var(--boxColor)",
+                        }}
+                      />
+                    }
                     label="Dark"
                   />
                   <FormControlLabel
                     value="system"
-                    control={<Radio />}
+                    control={
+                      <Radio
+                        sx={{
+                          color: "var(--boxColor)",
+                        }}
+                      />
+                    }
                     label="System default"
                     color="success"
                   />
@@ -170,14 +209,14 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
                   <Button
                     onClick={handleClose}
                     variant="outlined"
-                    color="error"
+                    sx={{color:"var(--boxColor)"}}
                   >
                     Cancel
                   </Button>
                   <Button
-                    onClick={handleClose}
+                    onClick={handleMode}
                     variant="contained"
-                    color="success"
+                    sx={{ background: "var(--boxColor)" }}
                   >
                     Ok
                   </Button>
@@ -214,7 +253,8 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
               <Brightness7 />
               <Button
                 sx={{
-                  fontFamily: '"sans-serif", "helventica"',
+                  textTransform: "none",
+                  color: "var(--foreground)",
                 }}
               >
                 Theme
@@ -224,7 +264,12 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
           <li onClick={handleDialogOpen}>
             <div className={styles.setting_li_items}>
               <ExitToApp />
-              <Button>Log out</Button>
+              <Button
+              sx={{
+                textTransform: "none",
+                color: "var(--foreground)",
+              }}
+              >Log out</Button>
             </div>
           </li>
         </ul>

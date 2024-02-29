@@ -87,8 +87,8 @@ const Login = () => {
         };
         // Send a POST request
         const response = await axios.post(
-          // "https://chat-app-auth.vercel.app/chatapp/user/auth/login",
-          "http://localhost:8000/chatapp/user/auth/login",
+          "https://chat-app-auth.vercel.app/chatapp/user/auth/login",
+          // "http://localhost:8000/chatapp/user/auth/login",
           user,
           {
             headers: {

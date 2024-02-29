@@ -1,6 +1,13 @@
 import * as React from "react";
+import { useDispatch } from "react-redux";
+import { alertWithTimeout } from "../app/features/userSelection/alertSlice";
 
-import { ExitToApp, Brightness7 } from "@mui/icons-material";
+import {
+  ExitToApp,
+  Brightness7,
+  CheckCircleOutline,
+  Logout,
+} from "@mui/icons-material";
 import {
   Backdrop,
   Box,
@@ -24,7 +31,10 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import user from "../Assets/pngwing.com (1).png";
 import styles from "../page.module.css";
-import { pink } from "@mui/material/colors";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
+import LoadingButtons from "./LoadingBtn";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -35,51 +45,78 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-interface YourComponentProps {
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 300,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  borderRadius: "10px",
+  p: 4,
+  background: "var(--background)",
+  color: "var(--foreground)",
+  border: `1px solid var(--border)`,
+};
+
+interface ComponentProps {
   handleRouteClick: (str: string) => void;
 }
 
-const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
+const Setting: React.FC<ComponentProps> = ({ handleRouteClick }) => {
+  const profileImage = useSelector(
+    (state: RootState) => state.users.profile_img
+  );
+  const dispatch = useDispatch<any>();
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [selectedValue, setSelectedValue] = React.useState<string>("");
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [logoutloading, setLogoutloading] = React.useState<boolean>(false);
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState<boolean>(false);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleOpen = (): void => setOpen(true);
+  const handleClose = (): void => setOpen(false);
 
-  const [dialog, setDialog] = React.useState(false);
-
-  const handleDialogOpen = () => {
+  const [dialog, setDialog] = React.useState<boolean>(false);
+  const handleDialogOpen = (): void => {
     setDialog(true);
   };
-
-  const handleDialogClose = () => {
+  const handleDialogClose = (): void => {
     setDialog(false);
   };
 
-  const handleProfileClick = () => {
+  const handleProfileClick = (): void => {
     handleRouteClick("profile");
   };
 
-  const handleMode = () => {
+  const handleMode = (): void => {
+    setLoading(true);
     setTheme(selectedValue);
-    handleClose();
+    const timer = setTimeout(() => {
+      setLoading(false);
+      handleClose();
+      clearTimeout(timer);
+    }, 2000);
   };
 
-  const style = {
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 300,
-    bgcolor: "background.paper",
-    boxShadow: 24,
-    borderRadius: "10px",
-    p: 4,
-    background: "var(--background)",
-    color: "var(--foreground)",
-    border: `1px solid var(--border)`,
+  const handleLogout = (): void => {
+    setLogoutloading(true);
+    localStorage.removeItem("user");
+    localStorage.removeItem("profile_img");
+    setTimeout(() => {
+      router.push("/login");
+      dispatch(
+        alertWithTimeout({
+          severity: "success",
+          variant: "filled",
+          message: "Log out successfully",
+        })
+        );
+        setLogoutloading(false);
+    }, 2000);
   };
 
   return (
@@ -88,7 +125,7 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
         <React.Fragment>
           <Dialog
             sx={{
-              "& > div:nth-child(3) > div": {
+              "& > div:nth-of-type(3) > div": {
                 borderRadius: "10px",
                 p: 2,
                 background: "var(--background)",
@@ -114,14 +151,17 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
             <DialogActions>
               <Button
                 variant="outlined"
-                sx={{color:"var(--boxColor)"}}
+                sx={{ color: "var(--boxColor)" }}
                 onClick={handleDialogClose}
               >
                 Cancel
               </Button>
-              <Button variant="contained" sx={{background: "var(--boxColor)",}} onClick={handleClose}>
-                Confirm
-              </Button>
+              <LoadingButtons
+                clickEvent={handleLogout}
+                txt={"Log out"}
+                icon={Logout}
+                loading={logoutloading}
+              />
             </DialogActions>
           </Dialog>
         </React.Fragment>
@@ -209,17 +249,16 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
                   <Button
                     onClick={handleClose}
                     variant="outlined"
-                    sx={{color:"var(--boxColor)"}}
+                    sx={{ color: "var(--boxColor)" }}
                   >
                     Cancel
                   </Button>
-                  <Button
-                    onClick={handleMode}
-                    variant="contained"
-                    sx={{ background: "var(--boxColor)" }}
-                  >
-                    Ok
-                  </Button>
+                  <LoadingButtons
+                    clickEvent={handleMode}
+                    txt={"Ok"}
+                    icon={CheckCircleOutline}
+                    loading={loading}
+                  />
                 </div>
               </Typography>
             </Box>
@@ -234,11 +273,11 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
           <div>
             <div className={styles.setting_user_container}>
               <Image
-                style={{ width: "100%", height: "100%" }}
-                layout="fill"
-                objectFit="contain"
-                src={user}
+                style={{ width: "100%", height: "auto" }}
+                src={profileImage ? profileImage : user}
                 alt="user"
+                width={100}
+                height={100}
               />
             </div>
             <div className={styles.setting_user_details}>
@@ -265,11 +304,13 @@ const Setting: React.FC<YourComponentProps> = ({ handleRouteClick }) => {
             <div className={styles.setting_li_items}>
               <ExitToApp />
               <Button
-              sx={{
-                textTransform: "none",
-                color: "var(--foreground)",
-              }}
-              >Log out</Button>
+                sx={{
+                  textTransform: "none",
+                  color: "var(--foreground)",
+                }}
+              >
+                Log out
+              </Button>
             </div>
           </li>
         </ul>

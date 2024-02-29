@@ -1,13 +1,19 @@
 // 'use client'
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../page.module.css";
 import UserProfile from "./UserProfile";
 import Setting from "./Setting";
 import { useDispatch } from "react-redux";
-import { setUser } from "../app/features/userSelection/userSlice";
+import {
+  setChatOpenerUser,
+  setProfileImg,
+} from "../app/features/userSelection/userSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
+
 import Image from "next/image";
-import user from "../Assets/pngwing.com (1).png";
+import userImg from "../Assets/pngwing.com (1).png";
 
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
@@ -17,6 +23,10 @@ const options = ["Profile", "Setting"];
 const ITEM_HEIGHT = 48;
 
 const HomeLeft = () => {
+  const storeUser = useSelector((state: RootState) => state.users.user);
+  const profileImage = useSelector(
+    (state: RootState) => state.users.profile_img
+  );
   const dispatch = useDispatch();
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
   const [settingOpen, setSettingOpen] = useState<boolean>(false);
@@ -49,8 +59,35 @@ const HomeLeft = () => {
   };
 
   const openChat = (userId: string): void => {
-    dispatch(setUser(userId));
+    dispatch(setChatOpenerUser(userId));
   };
+
+  const fetchProfileImg = async () => {
+    try {
+      const url =
+        "https://chat-app-profile.vercel.app/chatapp/user/profileimg/fetchprofileimg?_=" +
+        Date.now();
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!data.error) {
+        dispatch(setProfileImg(data.img));
+        localStorage.setItem("profile_img", data.img);
+        return;
+      }
+      throw new Error("Failed to fetch profile image");
+    } catch (error: any) {
+      console.log("Error fetching profile image:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (!profileImage && storeUser) fetchProfileImg();
+  }, [storeUser]);
 
   return (
     <>
@@ -64,8 +101,10 @@ const HomeLeft = () => {
                 onClick={() => handleRouteClick("profile")}
               >
                 <Image
-                  style={{ width: "80%", height: "auto" }}
-                  src={user}
+                  style={{ width: "100%", height: "auto" }}
+                  src={profileImage ? profileImage : userImg}
+                  width={100}
+                  height={100}
                   alt="."
                 />
               </span>
@@ -82,7 +121,7 @@ const HomeLeft = () => {
                 </IconButton>
                 <Menu
                   sx={{
-                    "& > div:nth-child(3)": {
+                    "& > div:nth-of-type(3)": {
                       background: "var(--background)",
                       color: "var(--foreground)",
                       border: "1px solid var(--border)",
@@ -109,8 +148,8 @@ const HomeLeft = () => {
                       key={option}
                       onClick={() => handleRouteClick(option)}
                       sx={{
-                        transition:"0.3s ease",
-                        ":hover": {background:"var(--hoverColor)"},
+                        transition: "0.3s ease",
+                        ":hover": { background: "var(--hoverColor)" },
                       }}
                     >
                       {option}
@@ -144,7 +183,7 @@ const HomeLeft = () => {
             <header className={styles.prof_sett_head}>
               <span onClick={handleBack}>&larr;</span>
             </header>
-            <UserProfile />
+            <UserProfile fetchProfileImg={fetchProfileImg} />
           </section>
         )}
         {settingOpen && (

@@ -3,20 +3,22 @@ import Style from "../login/login.module.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { alertWithTimeout } from "../app/features/userSelection/alertSlice";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Link from "next/link";
+import LoadingButtons from "../Components/LoadingBtn";
 
 const Signup = () => {
   const navigate = useRouter();
-  const [userNameError, setUserNameError] = useState<boolean>(false);
-  const [emailError, setEmailError] = useState<boolean>(false);
-  const [passError, setPassError] = useState<boolean>(false);
+  const dispatch = useDispatch<any>();
 
   const [userName, setUserName] = useState<string>("");
+  const [userNameError, setUserNameError] = useState<boolean>(false);
 
   const [userEmail, setUserEmail] = useState<string>("");
   const [isEmailValid, setIsEmailValid] = useState<boolean>(true);
@@ -24,9 +26,11 @@ const Signup = () => {
   const [userPassword, setUserPassword] = useState<string>("");
   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(true);
 
+  const [loading, setLoading] = React.useState<boolean>(false);
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    const isLogin = storedUser? true : false
+    const isLogin = storedUser ? true : false;
     if (isLogin) {
       navigate.push("/");
     }
@@ -64,13 +68,33 @@ const Signup = () => {
   };
 
   const handleSignup = async () => {
+    setLoading(true);
     interface UserDetails {
       name: string;
       email: string;
       password: string;
     }
     try {
-      if (userName.length > 0 && isEmailValid && isPasswordValid) {
+      if (!navigator.onLine) {
+        dispatch(
+          alertWithTimeout({
+            severity: "warning",
+            variant: "filled",
+            message:
+              "You are currently offline. Please check your internet connection and try again.",
+          })
+        );
+        setLoading(false);
+        return;
+      }
+
+      if (
+        userName.length > 0 &&
+        isEmailValid &&
+        userEmail.length > 0 &&
+        isPasswordValid &&
+        userPassword.length > 5
+      ) {
         const user: UserDetails = {
           name: userName,
           email: userEmail,
@@ -78,43 +102,60 @@ const Signup = () => {
         };
         // Send a POST request
         const response = await axios.post(
-          "https://chat-app-auth.vercel.app/chatapp/user/auth/signup",
+          // "https://chat-app-auth.vercel.app/chatapp/user/auth/signup",
+          "http://localhost:8000/chatapp/user/auth/signup",
           user,
           {
             headers: {
               "Content-Type": "application/json",
-              token: "auth token",
             },
+            withCredentials: true,
           }
         );
 
-        const responseData = response.data;
+        const data = response.data;
 
-        if (responseData.err) {
-          alert("Error signing up");
-          return;
+        if (!data.error) {
+          localStorage.setItem("user", JSON.stringify(data));
+          navigate.push("/");
+          dispatch(
+            alertWithTimeout({
+              severity: "success",
+              variant: "filled",
+              message: `${data.message}`,
+            })
+          );
+          setLoading(false);
         }
-
-        localStorage.setItem("user", JSON.stringify(responseData));
-        setUserName("");
-        setUserEmail("");
-        setUserPassword("");
-        navigate.push("/");
       } else {
+        dispatch(
+          alertWithTimeout({
+            severity: "warning",
+            variant: "filled",
+            message: "Please fill the all details correctly",
+          })
+        );
         if (userName.length <= 0) {
           setUserNameError(true);
         }
-        if (userEmail.length <= 0) {
-          setEmailError(true);
-        }
-        if (userPassword.length <= 0) {
-          setPassError(true);
-        }
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error signing up:", error);
-      // Handle error appropriately
-      alert("Error signing up. Please try again later.");
+    } catch (error: any) {
+      dispatch(
+        alertWithTimeout({
+          severity: "error",
+          variant: "filled",
+          message: `${
+            error.response
+              ? error.response.data.message
+              : "Internal Server Error"
+          }`,
+        })
+      );
+      const timer = setTimeout(() => {
+        setLoading(false);
+        clearTimeout(timer);
+      }, 3000);
     }
   };
 
@@ -169,7 +210,7 @@ const Signup = () => {
                       }}
                     ></Stack>
                     <TextField
-                      error={!isEmailValid || emailError}
+                      error={!isEmailValid}
                       helperText={!isEmailValid ? "Incorrect Email." : ""}
                       id="standard-search"
                       label="Email*"
@@ -186,7 +227,7 @@ const Signup = () => {
                       }}
                     />
                     <TextField
-                      error={!isPasswordValid || passError}
+                      error={!isPasswordValid}
                       helperText={
                         !isPasswordValid
                           ? "Combine of (Uppercase, lowercase, symbole, number)"
@@ -207,9 +248,11 @@ const Signup = () => {
                     />
                   </Box>
                   <div style={{ marginTop: "24px" }}>
-                    <Button
-                      onClick={handleSignup}
-                      sx={{
+                    <LoadingButtons
+                      clickEvent={handleSignup}
+                      txt={"Sign up"}
+                      loading={loading}
+                      customStyle={{
                         width: "70%",
                         borderRadius: "20px",
                         "@media (max-width:750px)": {
@@ -219,11 +262,12 @@ const Signup = () => {
                           background: "rgb(50, 170, 180)",
                         },
                         background: "rgb(59, 194, 188)",
+                        "&.Mui-disabled": {
+                          color: "white",
+                        },
+                        color: "white",
                       }}
-                      variant="contained"
-                    >
-                      Sign up
-                    </Button>
+                    />
                   </div>
                 </div>
                 <div className={Style.have_acc}>

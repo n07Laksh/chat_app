@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./app/Providers";
 import { ThemeProvider } from "./Components/themeProvider";
+import AlertBox from "./Components/Alert";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <AlertBox />
             {children}
           </ThemeProvider>
         </Providers>

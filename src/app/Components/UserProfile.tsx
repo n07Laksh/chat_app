@@ -228,8 +228,8 @@ const UserProfile: React.FC<ComponentProps> = ({ fetchProfileImg }) => {
       // api call for updating name in database
       if (storeUser && editTxt) {
         const response = await fetch(
-          // "https://chat-app-auth.vercel.app/chatapp/user/update/updatename",
-          "http://localhost:8000/chatapp/user/update/updatename",
+          "https://chat-app-auth.vercel.app/chatapp/user/update/updatename",
+          // "http://localhost:8000/chatapp/user/update/updatename",
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },

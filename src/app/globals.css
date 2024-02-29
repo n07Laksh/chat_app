@@ -1,8 +1,31 @@
 :root {
-  --background:black;
-  --text: white;
+  --background:#020817;
+  --foreground:#fff;
 }
+body {
+  background: var(--background);
+  color:var(--foreground);
+}
+
 body,*,html {
   margin:0;
   padding:0;
+}
+
+.App {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:var(--background);
+  z-index: 4;
+}
+
+.crop-container {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  right: 50px;
+  bottom: 50px;
 }

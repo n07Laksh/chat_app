@@ -1,5 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { alertWithTimeout } from "../app/features/userSelection/alertSlice";
 
 import React, { useEffect, useState } from "react";
 import Style from "./login.module.css";
@@ -7,11 +9,12 @@ import axios from "axios";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import Link from "next/link";
+import LoadingButtons from "../Components/LoadingBtn";
 
 const Login = () => {
   const navigate = useRouter();
+  const dispatch = useDispatch<any>();
 
   const [email, setEmail] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(true);
@@ -19,9 +22,11 @@ const Login = () => {
   const [password, setPassword] = useState<string>("");
   const [isPasswordValid, setIsPasswordValid] = useState(true);
 
+  const [loading, setLoading] = React.useState<boolean>(false);
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    const isLogin = storedUser? true : false
+    const isLogin = storedUser ? true : false;
     if (isLogin) {
       navigate.push("/");
     }
@@ -52,54 +57,91 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
+    setLoading(true);
     interface UserDetails {
       email: string;
       password: string;
     }
     try {
-      if (isEmailValid && isPasswordValid) {
+      if (!navigator.onLine) {
+        dispatch(
+          alertWithTimeout({
+            severity: "warning",
+            variant: "filled",
+            message:
+              "You are currently offline. Please check your internet connection and try again.",
+          })
+        );
+        setLoading(false);
+        return;
+      }
+      if (
+        isEmailValid &&
+        email.length > 0 &&
+        isPasswordValid &&
+        password.length > 5
+      ) {
         const user: UserDetails = {
           email: email,
           password: password,
         };
         // Send a POST request
         const response = await axios.post(
-          "http://localhost:8080/user/auth/login",
+          // "https://chat-app-auth.vercel.app/chatapp/user/auth/login",
+          "http://localhost:8000/chatapp/user/auth/login",
           user,
           {
             headers: {
               "Content-Type": "application/json",
-              token: "auth token",
             },
+            withCredentials: true,
           }
         );
 
-        const responseData = response.data;
+        const data = response.data;
+        console.log("data", data);
 
-        if (responseData.err) {
-          alert("Error Log-in");
-          return;
-        }
-
-        localStorage.setItem("user", JSON.stringify(responseData));
-        setEmail("");
-        setPassword("");
-        navigate.push("/");
-      }
-
-    } catch (error) {
-      let err:any = error;
-      if (err.response) {
-        const status = err.response.status;
-        if (status === 400) {
-          alert("Invalid user ID or password. Please try again.");
-        } else {
-          alert("An error occurred. Please try again later.");
+        if (!data.error) {
+          localStorage.setItem("user", JSON.stringify(data));
+          navigate.push("/");
+          dispatch(
+            alertWithTimeout({
+              severity: "success",
+              variant: "filled",
+              message: `${data.message}`,
+            })
+          );
+          setLoading(false);
         }
       } else {
-        console.error("Error logging in:", error);
-        alert("An error occurred. Please try again later.");
+        dispatch(
+          alertWithTimeout({
+            severity: "warning",
+            variant: "filled",
+            message: "Please fill the all details correctly",
+          })
+        );
+        setLoading(false);
+        setIsEmailValid(false);
+        setIsPasswordValid(false);
       }
+    } catch (error: any) {
+      console.log(error);
+      dispatch(
+        alertWithTimeout({
+          severity: "error",
+          variant: "filled",
+          message: `${
+            error.response
+              ? error.response.data.message
+              : "Internal Server Error"
+          }`,
+        })
+      );
+      const timer = setTimeout(() => {
+        setLoading(false);
+        clearTimeout(timer);
+      }, 3000);
     }
   };
 
@@ -150,7 +192,9 @@ const Login = () => {
                     <TextField
                       error={!isPasswordValid}
                       helperText={
-                        !isPasswordValid ? "Password must meet criteria." : ""
+                        !isPasswordValid
+                          ? "Use this combination (uppercase, lowercase, symbols, numbers)"
+                          : ""
                       }
                       id="standard-password"
                       label="Password*"
@@ -177,9 +221,11 @@ const Login = () => {
                     </Link>
                   </div>
                   <div style={{ marginTop: "40px" }}>
-                    <Button
-                      onClick={handleLogin}
-                      sx={{
+                    <LoadingButtons
+                      clickEvent={handleLogin}
+                      txt={"Sign in"}
+                      loading={loading}
+                      customStyle={{
                         width: "70%",
                         borderRadius: "20px",
                         "@media (max-width:750px)": {
@@ -189,11 +235,12 @@ const Login = () => {
                           background: "rgb(50, 170, 180)",
                         },
                         background: "rgb(59, 194, 188)",
+                        "&.Mui-disabled": {
+                          color: "white",
+                        },
+                        color: "white",
                       }}
-                      variant="contained"
-                    >
-                      Sign in
-                    </Button>
+                    />
                   </div>
                 </div>
                 <div className={Style.have_acc}>

@@ -13,7 +13,7 @@ const HomeRight = () => {
 
   return (
     <>
-      {!user.user ? (
+      {!user.chatOpenUser ? (
         <div>
           <section className={styles.home_right_img_section}>
             <Image
@@ -27,30 +27,30 @@ const HomeRight = () => {
         <div className={styles.chat_box}>
           <section style={{width:"100%"}}>
             <header className={styles.current_chat_user_header}>
-              <h4 onClick={()=>setOpneDetail(true)} style={{cursor:"pointer"}}>{user.user}</h4>
+              <h4 onClick={()=>setOpneDetail(true)} style={{cursor:"pointer"}}>{user.chatOpenUser}</h4>
             </header>
 
             <main className={styles.chat_box_main}>
-              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.user}!</p>
-              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.user}!</p>
-              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.user}!</p>
-              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.user}!</p>
-              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.user}!</p>
-              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.user}!</p>
-              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.user}!</p>
-              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.user}!</p>
-              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.user}!</p>
-              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.user}!</p>
-              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.user}!</p>
+              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.chatOpenUser}!</p>
+              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.chatOpenUser}!</p>
+              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.chatOpenUser}!</p>
+              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.chatOpenUser}!</p>
+              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.chatOpenUser}!</p>
+              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.chatOpenUser}!</p>
+              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.chatOpenUser}!</p>
+              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.chatOpenUser}!</p>
+              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.chatOpenUser}!</p>
+              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.chatOpenUser}!</p>
+              <p style={{padding:"30px 0"}}>Welcome to ChatApp, {user.chatOpenUser}!</p>
             </main>
           </section>
           {opneDetail && (
-            <section style={{ borderLeft: "1px solid black", width: "50%" }}>
+            <section style={{ borderLeft: "1px solid var(--border)", width: "50%" }}>
               <header className={styles.current_chat_user_header}>
-                <h4 className={styles.user_info_close} onClick={()=>setOpneDetail(false)} title="close">X</h4>
+                <h4 className={styles.user_info_close} onClick={()=>setOpneDetail(false)} title="close">&#215;</h4>
               </header>
               <div>
-                <h1>{user.user}</h1>
+                <h1>{user.chatOpenUser}</h1>
               </div>
             </section>
           )}

@@ -1,11 +1,13 @@
 'use client'
 import { configureStore } from '@reduxjs/toolkit';
 import userSlice from "./features/userSelection/userSlice";
+import alertSlice from './features/userSelection/alertSlice';
 // ...
 
 const store = configureStore({
   reducer: {
     users: userSlice,
+    alerts: alertSlice,
   }
 })
 

@@ -65,7 +65,7 @@ const HomeLeft = () => {
   const fetchProfileImg = async () => {
     try {
       const url =
-        "https://chatappprofile.vercel.app/chatapp/user/profileimg/fetchprofileimg";
+        "https://chat-app-profile-laxmilals-projects.vercel.app/chatapp/user/profileimg/fetchprofileimg";
       const response = await fetch(url, {
         method: "GET",
         credentials: "include",

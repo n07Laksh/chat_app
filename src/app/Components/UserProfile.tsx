@@ -139,7 +139,7 @@ const UserProfile: React.FC<ComponentProps> = ({ fetchProfileImg }) => {
       formData.append("picture", img);
 
       const url =
-        "https://chat-app-profile.vercel.app/chatapp/user/profileimg/profile";
+        "https://chatappprofile.vercel.app/chatapp/user/profileimg/profile";
         // "http://localhost:8080/chatapp/user/profileimg/profile";
 
       const response = await fetch(url, {
@@ -184,7 +184,7 @@ const UserProfile: React.FC<ComponentProps> = ({ fetchProfileImg }) => {
     setLoading(true);
     try {
       let url =
-        "https://chat-app-profile.vercel.app/chatapp/user/profileimg/removeimage";
+        "https://chatappprofile.vercel.app/chatapp/user/profileimg/removeimage";
       const response = await fetch(url, {
         method: "DELETE",
         credentials: "include",
@@ -228,7 +228,7 @@ const UserProfile: React.FC<ComponentProps> = ({ fetchProfileImg }) => {
       // api call for updating name in database
       if (storeUser && editTxt) {
         const response = await fetch(
-          "https://chat-app-auth.vercel.app/chatapp/user/update/updatename",
+          "https://chatappauth.vercel.app/chatapp/user/update/updatename",
           // "http://localhost:8000/chatapp/user/update/updatename",
           {
             method: "PUT",

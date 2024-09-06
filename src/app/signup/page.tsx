@@ -102,7 +102,8 @@ const Signup = () => {
         };
         // Send a POST request
         const response = await axios.post(
-          "https://chat-app-auth-laxmilals-projects.vercel.app/chatapp/user/auth/signup",
+          // "https://chat-app-auth-laxmilals-projects.vercel.app/chatapp/user/auth/signup",
+          "http://localhost:8000/chatapp/user/auth/signup",
           user,
           {
             headers: {

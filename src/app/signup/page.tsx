@@ -103,7 +103,6 @@ const Signup = () => {
         // Send a POST request
         const response = await axios.post(
           "https://chat-app-auth-laxmilals-projects.vercel.app/chatapp/user/auth/signup",
-          // "http://localhost:8000/chatapp/user/auth/signup",
           user,
           {
             headers: {
@@ -143,7 +142,7 @@ const Signup = () => {
     } catch (error: any) {
       dispatch(
         alertWithTimeout({
-          severity: "error",
+          severity: "warning",
           variant: "filled",
           message: `${
             error.response

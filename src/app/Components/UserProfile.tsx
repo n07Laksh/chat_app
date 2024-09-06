@@ -140,7 +140,6 @@ const UserProfile: React.FC<ComponentProps> = ({ fetchProfileImg }) => {
 
       const url =
         "https://chat-app-profile-laxmilals-projects.vercel.app/chatapp/user/profileimg/profile";
-        // "http://localhost:8080/chatapp/user/profileimg/profile";
 
       const response = await fetch(url, {
         method: "POST",
